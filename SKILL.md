@@ -1,49 +1,33 @@
 ---
 name: en-zh-translation-polish
-description: Translate English passages into natural Chinese or polish Chinese translations against the source; supports bilingual output with Taiwanese conventions.
+description: Translate English passages into natural, polished Chinese with Taiwanese conventions.
 license: MIT
-allowed-tools: Read Write Edit Bash
+allowed-tools: Read Write Edit
 metadata:
-  version: 1.2.0
-  tags: [translation, traditional-chinese, english-to-chinese, 英譯中, 潤色, 中英對照, localization, 臺灣中文]
+  version: 1.3.0
+  tags: [translation, traditional-chinese, english-to-chinese, 英譯中, 潤色, localization, 臺灣中文]
 ---
 
 # 英譯中翻譯潤色 (English→Chinese Translate & Polish)
 
-把英文譯成**忠實、道地的中文**並產出**英中對照**譯文。汲取余光中《論中文的常態與變態》、思果《翻譯研究》等臺灣翻譯名家的思想精髓，在完整、準確傳達原文的前提下，**以讀者為中心、依文本類型調節歸化尺度、發揮中文意合優勢、兼顧音韻節奏與臺灣在地語言規範**。
+把英文譯成**忠實、道地的正體中文**，並直接輸出**純中文譯文**。汲取余光中《論中文的常態與變態》、思果《翻譯研究》等臺灣翻譯名家的思想精髓，在完整、準確傳達原文的前提下，**以讀者為中心、依文本類型調節歸化尺度、發揮中文意合優勢、兼顧音韻節奏與臺灣在地語言規範**。
 
 **忠實性優先，適用於所有檔位。** 歸化自由度只調整表達方式，不授權增刪事實、改變邏輯關係、說話者、限定條件或語氣強度。原文的比喻、誇張和個人語氣應保留其作用，不額外強化。外部知識用於消歧，不能補寫成原文的陳述；原文未展開的資訊不自行補齊。使用者明確要求摘要、節譯或改寫時按該範圍交付，並說明處理方式。
 
-## 依請求選擇交付與檢查範圍
+## 對話場景交付原則
 
-聊天中的短段落翻譯直接在回覆中交付，使用者要求檔案時才寫入檔案；全文或專案翻譯沿用下述預設檔案契約。使用者明確選擇純譯文、雙語或已有目標檔案時按其要求，不重複確認。先保留數字、術語、引文與限定條件，再依文體選擇必要的潤色檢查；短文本不必逐項展示診斷過程或通讀所有參考表。研究論文、文學和正式文件的專項邊界繼續適用。
-
-## 獨立使用與檔案輸入
-
-本技能可獨立安裝使用，無需額外安裝其他翻譯技能。輸入為 PDF 或其他檔案時，先使用當前宿主可用的讀取工具獲取原文；保留使用者要求的正文、圖表說明、公式、引文和參考文獻。無法可靠提取的內容應說明缺口，不將翻譯任務轉交給使用者未安裝的技能。
+對話翻譯直接在回覆中交付**純中文排版正文**。保留數字、術語、引文與限定條件，依文體執行潤色，呈現最終洗練譯文。若使用者另有指定交付形式（如要求雙語或特定檔案），按其要求交付。研究論文、文學和正式文件的專項邊界繼續適用。
 
 ## 交付物
 
-預設產出**一個**英中對照 Markdown 檔案；使用者要求「全中文版」時再以程式派生。
+直接在聊天回覆中交付**純中文譯文**：
 
-1. **`<名稱> 翻譯(中英對照).md`** — 唯一真源。每段**英文原文作為 blockquote (`> `)**，緊跟其下是中文譯文。
-2. （按需）**`<名稱> 翻譯(全中文).md`** — 脫離對照檔案**用程式機械派生**（刪除 `> ` 行），不要重打中文。
-   ```bash
-   python - "<名稱> 翻譯(中英對照).md" "<名稱> 翻譯(全中文).md" <<'PY'
-   import sys, re
-   src, dst = sys.argv[1], sys.argv[2]
-   lines = open(src, encoding='utf-8').read().split('\n')
-   kept = [ln for ln in lines if not ln.lstrip().startswith('>')]
-   open(dst,'w',encoding='utf-8').write(re.sub(r'\n{3,}','\n\n','\n'.join(kept)).strip()+'\n')
-   PY
-   ```
-   > 順序要求：**先執行階段 6 的標點規範化，再派生全中文版**——派生程式原樣繼承標點，不會再糾正。
-
-若輸入只是聊天裡的一小段（幾句話），直接在回覆裡給對照即可，不必寫入檔案；成篇文章或使用者指明儲存才建立檔案。命名沿用源檔名，無工具前綴（除非使用者要求）。目標檔案已存在則更新而非新建。
+1. **對話回覆（預設）** — 直接輸出排版工整的純中文譯文。譯文結尾附一句極簡短的「檔位判定與主要潤色取捨」（例如：*階段 0 判定：偏硬／政論，自由度≈3，準確優先*）。
+2. **（按需）純中文檔案** — 當使用者明確要求儲存檔案時，直接將純中文譯文寫入指定的 Markdown 檔案（如 `<名稱> 翻譯(純中文).md`）。目標檔案已存在則更新而非新建。
 
 ## 工作流（嚴格按序；每段譯文都要走完潤色與核查）
 
-長文、多受訪者或圖文穿插文本，依原有章節、發言者或連續小段分批翻譯並就地核查；合併後檢查全篇順序、缺段和術語一致性。程式只組裝已核查內容。短文本直接完成，不強制分塊或另建檢查檔案。
+長文、多受訪者或圖文穿插文本，依原有章節、發言者或連續小段分批就地核查；合併後檢查全篇順序、缺段和術語一致性。
 
 ### 階段 0 — 文本分析：定歸化檔位 ★必做第一步
 先回答：**這是硬文本還是軟文本？屬紐馬克哪一類？自由度大致幾分 (1–10)？** 詳見 `reference/text-analysis-and-qa.md` 小節 A。
@@ -80,103 +64,27 @@ metadata:
 
 段落數量、英文引用存在、實體齊全和標點通過均不能替代語意核查。發現問題時定位原文與譯文中的對應位置，修復後複查受影響段落；不以「已全面檢查」的自述代替核對，不要求逐字或逐句形式上的一一對應。
 
-### 階段 6 — 中文標點規範化 ★（機械執行，寫入檔案後必跑）
-依**臺灣教育部《重訂標點符號手冊》**標準執行，中文譯文裡的標點必須是正體中文全形，不能殘留英文半形。規則：
-- `, : ; ? !` → `，：；？！`；句末用 `。`；並列用頓號 `、`；破折號 `——`（佔兩字寬）；刪節號 `……`（佔兩字寬，六點置中）。
-- 圓括號 `( )` → 全形 `（ ）`：**僅當緊鄰中文字元時才轉**（包裹中文內容、含人名／術語原文注，如「道德受體地位（moral patienthood）」）；純英文括注（如電影演職員 `(Harold D. Schuster, 1937)`）保持半形。
+### 階段 6 — 中文標點規範化 ★
+全面遵循**臺灣教育部《重訂標點符號手冊》**標準，輸出規範的正體中文全形標點：
+- **基本標點**：`, : ; ? !` 一律使用全形 `，：；？！`；句末使用句號 `。`；並列詞語使用頓號 `、`；破折號使用兩字寬 `——`；刪節號使用六點置中 `……`。
+- **括號規範**：圓括號 `( )` 在包覆中文或含人名／術語原文注（如「道德受體地位（moral patienthood）」）時使用全形 `（ ）`；純西文文獻演職員標註（如 `(Harold D. Schuster, 1937)`）保留半形。
 - **引號規範（臺灣標準）**：
-  - **外層一律使用單引號 `「` `」`**；**內層巢狀使用雙引號 `『` `』`**。
-  - 將直引號 `"` 依開閉配對轉為 `「` 與 `」`；將西式彎引號 `“` `”` 歸一為 `「` `」`；`‘` `’` 歸一為 `『` `』`。
-- 書名號使用雙角引號 `《 》`（書籍、雜誌、期刊）；篇名號使用單角引號 `〈 〉`（單篇論文、篇章、詩歌、歌曲）。
+  - **外層一律使用單引號 `「` `」`**；**內層巢狀一律使用雙引號 `『` `』`**。
+  - 將直引號 `"` 與西式彎引號 `“` `”` 轉換為 `「` 與 `」`；`‘` `’` 轉換為 `『` `』`。
+  - 英文縮寫（如 `don't`, `it's`）前後為英文字母時保留半形撇號 `'`。
+- **書名號與篇名號**：書籍、雜誌、期刊使用雙角引號 `《 》`；單篇論文、篇章、詩歌、歌曲使用單角引號 `〈 〉`。
+- **保留半形例外**：Markdown 連結 `[文字](url)`、行內保留之英文詞句內部標點、數字／小數點／版本號（如 `4.3`、`Word 2010`、`A.I.`）、程式碼塊與數學公式。
 
-**以下一律保持半形，絕不轉換：** ① 英文原文 blockquote（`> ` 行）整段不動；② Markdown 連結 `[文字](url)` 的括號與 URL；③ 中文行內嵌入的整句／片語英文，其內部標點——如被引用的英文原句 `…one nation under God, indivisible, …`；④ 數字／縮寫／版本號裡的點：`4.3`、`Word 2010`、`A.I.`、`L. M.`；⑤ 程式碼／公式塊。
+### 階段 7 — 輸出純中文譯文
+在對話中直接交付完整打磨的純中文譯文，文末附帶一句簡明備註（說明檔位判定與主要潤色取捨）。
 
-判定原理：**逗號類與圓括號都只在緊鄰中文字元（前或後）時才轉**；直雙引號 `"` 與西式引號按開閉依序映射至「」與『』。寫入檔案後跑下方程式機械正規化並自檢（`殘留` 必須為 0）：
-
-```bash
-python - "<名稱> 翻譯(中英對照).md" <<'PY'
-import re, sys
-src = sys.argv[1]
-lines = open(src, encoding='utf-8').read().split('\n')
-CJK_EXTRA = set('「」『』·—…《》〈〉【】、。，！？；：（）“”‘’')
-def is_cjk(c):
-    if not c: return False
-    o = ord(c)
-    return (0x3400<=o<=0x9fff) or (0x3000<=o<=0x303f) or (0xff00<=o<=0xffef) or (c in CJK_EXTRA)
-
-SMAP = {',':'，', ';':'；', ':':'：', '?':'？', '!':'！', '(':'（', ')':'）'}
-LINK = re.compile(r'\[[^\]]*\]\([^)]*\)')
-
-def fix(line):
-    store = []
-    line = LINK.sub(lambda m: store.append(m.group(0)) or '\x00%d\x00'%(len(store)-1), line)
-    out = []
-    sop = True   # 單引號「」交替（臺灣標準外層引號）
-    dop = True   # 雙引號『』交替（臺灣標準內層引號）
-    for i, c in enumerate(line):
-        if c == '"' or c in '“”':
-            out.append('「' if sop else '」')
-            sop = not sop
-        elif c in '‘’':
-            out.append('『' if dop else '』')
-            dop = not dop
-        elif c == "'":
-            # 判斷是否為英文縮寫 (如 don't, it's)，前後為英文字母則保持半形
-            prev_c = line[i-1] if i > 0 else ''
-            next_c = line[i+1] if i + 1 < len(line) else ''
-            if prev_c.isalpha() and next_c.isalpha():
-                out.append("'")
-            else:
-                out.append('『' if dop else '』')
-                dop = not dop
-        else:
-            out.append(c)
-    ch = out
-    n = len(ch)
-    for i, c in enumerate(ch):
-        if c in SMAP and (is_cjk(ch[i-1] if i else '') or is_cjk(ch[i+1] if i+1<n else '')):
-            ch[i] = SMAP[c]
-    line = ''.join(ch)
-    return re.sub(r'\x00(\d+)\x00', lambda m: store[int(m.group(1))], line)
-
-def skip(ln):
-    s = ln.strip()
-    return s == '' or ln.lstrip().startswith('>') or s == '---'
-
-res = [ln if skip(ln) else fix(ln) for ln in lines]
-open(src, 'w', encoding='utf-8').write('\n'.join(res))
-
-def residual(ln):
-    t = LINK.sub('', ln)
-    return sum(1 for m in re.finditer(r'[,;:?!()]', t)
-               if is_cjk(t[m.start()-1] if m.start() else '') or is_cjk(t[m.start()+1] if m.start()+1<len(t) else ''))
-
-bad = sum(residual(ln) for ln in res if not skip(ln))
-print('殘留半形標點:', bad)
-PY
-```
-聊天裡直接給的小段對照（未寫入檔案）同樣要手動套用上述規則。
-
-### 階段 7 — 輸出英中對照
-依下方格式逐段配對；成篇則寫入檔案；給使用者附一句「檔位判定 + 主要潤色取捨」。
-
-## 英中對照輸出格式
-
-**按段落配對**：英文原段作為 blockquote，緊接中文譯文。
-
-```markdown
-> It is a truth universally acknowledged that a single man in possession of a
-> good fortune must be in want of a wife.
-
-凡是有錢的單身漢，總想娶位太太，這是一條舉世公認的真理。
-```
+## 純中文輸出格式
 
 規則：
-- 中文譯文用中文全形標點；半形標點只留給英文原文、連結、行內英文詞句、數字縮寫、程式碼（詳見階段 6，寫入檔案後用程式自檢）。
-- 只清理提取噪聲（接回斷行連字號、刪除頁首頁尾頁碼），**不要**從中文反推英文。
-- 標題作中文 `##`/`###`，不加 blockquote；可選地把英文標題作為上一行 blockquote。
-- 不該被程式刪除、需保留進全中文版的內容（圖片、表格、標題塊）**不要** blockquote。
-- 公式／程式碼用共享代碼塊，不按語言重複。
+- **純中文正文**：直接輸出翻譯打磨後的中文正文。
+- **結構對齊**：保持原文的章節層級（`#`、`##`、`###` 譯為相應中文標題）、條列式清單、表格、圖片說明等結構。
+- **專業元素**：公式與程式碼塊保持標準排版；表格翻譯單元格內容並維持對齊。
+- **標點自律**：嚴格自檢標點，中文句意全形、臺灣外單「」內雙『』引號。
 
 ## 潤色邊界 ★（防止方法論被過度使用）
 
@@ -193,14 +101,12 @@ PY
 The confidence that the West would remain a dominant force in the 21st century is giving way to a sense of foreboding.
 ```
 
-輸出（英中對照；階段 0 判定：偏硬／政論，自由度≈3，準確優先、克制音韻）：
-
-> The confidence that the West would remain a dominant force in the 21st century is giving way to a sense of foreboding.
+輸出（純中文譯文）：
 
 西方曾篤信自己將在 21 世紀穩居主導地位，如今這份自信，正讓位於一種隱隱的不祥之感。
 
-## 致謝與理論源流
+*（階段 0 判定：偏硬／政論，自由度≈3，準確優先、克制音韻）*
 
-本 skill 的程式碼、提示詞與組織方式以 **MIT 許可**發布，可自由使用、修改、再分發。
+## 致謝與理論源流
 
 本方法論之中文診斷與修辭規範，核心承襲余光中《論中文的常態與變態》《翻譯乃大道》、思果《翻譯研究》《翻譯新究》等臺灣翻譯大師之論述精華，並融合功能翻譯學派（如 Peter Newmark 文本功能理論）與當代英譯中在地化實務。標點符號標準全面遵照臺灣教育部《重訂標點符號手冊》。謹向深耕中文純淨與翻譯之道的前輩學者致敬。
